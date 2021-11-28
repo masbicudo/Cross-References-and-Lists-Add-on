@@ -34,6 +34,11 @@ limitations to what I can do. I tried to get the number of the page where the
 target element is, but the API does not provide a way to do that. So listings
 will not show the page number, though, they will be clickable links.
 
+## Terms of Usage
+
+- [Terms of Usage](service-terms)
+- [Privacy policy](privacy-policy)
+
 ## License
 
 [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0)
