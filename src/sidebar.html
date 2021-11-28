@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  </head>
+  <body>
+    <div class="sidebar">
+      <form>
+        <h1>References</h1>
+        <div class="block col-contain">
+          <div class="col-one">
+          </div>
+        </div>
+        <div class="block" id="button-bar">
+          <button class="blue" id="button-update">Update cross references</button>
+        </div>
+        <h1>Listing</h1>
+        <div class="block" id="button-bar-2">
+          <button class="blue" id="button-insert-listing">Insert listing for</button>
+          <input type="text" id="text-listing-type" />
+        </div>
+        <div class="block" id="button-bar-3">
+          <button class="blue" id="button-update-listings">Update all listings</button>
+        </div>
+      </form>
+    </div>
+    <div id="log"></div>
+  </body>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+    $(function() {
+      $('#button-update').click(actionUpdateLinksAndBookmarks);
+      $('#button-insert-listing').click(actionInsertListing);
+      $('#button-update-listings').click(actionUpdateListings);
+      google.script.run.withSuccessHandler(loadPreferencesToGui)
+          .withFailureHandler(showError).getPreferences()
+    })
+
+    /**
+     * Runs a server-side function to translate the user-selected text and update
+     * the sidebar UI with the resulting translation.
+     */
+    function actionUpdateLinksAndBookmarks() {
+      this.disabled = true;
+      $('#error').remove();
+      // var origin = $('input[name=origin]:checked').val();
+      // var dest = $('input[name=dest]:checked').val();
+      // var savePrefs = $('#save-prefs').is(':checked');
+      google.script.run
+          .withSuccessHandler(
+            function(_, element) {
+              element.disabled = false;
+            })
+          .withFailureHandler(
+            function(msg, element) {
+              showError(msg, $('#button-bar'));
+              element.disabled = false;
+            })
+          .withUserObject(this)
+          .updateLinksAndBookmarks();
+    }
+
+    /**
+     * Inserts a new listing of a given element type.
+     */
+    function actionInsertListing() {
+      this.disabled = true;
+      $('#error').remove();
+      let type = $("#text-listing-type").val()
+      google.script.run
+          .withSuccessHandler(
+            function(_, element) {
+              element.disabled = false;
+            })
+          .withFailureHandler(
+            function(msg, element) {
+              showError(msg, $('#button-bar-2'));
+              element.disabled = false;
+            })
+          .withUserObject(this)
+          .insertListing(type);
+    }
+
+    /**
+     * Updates all listings of all types.
+     */
+    function actionUpdateListings() {
+      this.disabled = true;
+      $('#error').remove();
+      google.script.run
+          .withSuccessHandler(
+            function(_, element) {
+              element.disabled = false;
+            })
+          .withFailureHandler(
+            function(msg, element) {
+              showError(msg, $('#button-bar-3'));
+              element.disabled = false;
+            })
+          .withUserObject(this)
+          .updateListings();
+    }
+
+    /**
+     * Callback function that populates the options on the user interface.
+     *
+     * @param {Object} options The saved user options.
+     */
+    function loadPreferencesToGui(options) {
+      // $('input:radio[name="origin"]')
+      //     .filter('[value=' + options.examplePropertyName + ']')
+      //     .attr('checked', true)
+    }
+
+    /**
+     * Inserts a div that contains an error message after a given element.
+     *
+     * @param {string} msg The error message to display.
+     * @param {DOMElement} element The element after which to display the error.
+     */
+    function showError(msg, element) {
+      var div = $('<div id="error" class="error">' + msg + '</div>');
+      $(element).after(div);
+    }
+  </script>
+</html>
